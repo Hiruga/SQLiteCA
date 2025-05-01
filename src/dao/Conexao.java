@@ -1,8 +1,6 @@
 package dao;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class Conexao {
 
@@ -12,7 +10,19 @@ public class Conexao {
         try{
            Connection conexao = DriverManager.getConnection(url);
            System.out.println("Conexão estabelecida com o SQLite.");
+
+           String sql = "CREATE TABLE IF NOT EXISTS Jogo ("+
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT,"+
+                        "nome TEXT NOT NULL,"+
+                        "genero TEXT NOT NULL,"+
+                        "estudio TEXT NOT NULL,"+
+                        "preco INTEGER,"+
+                        "duracao INTEGER)";
+
+           Statement stmt = conexao.createStatement();
+           stmt.execute(sql);
            return conexao;
+
         } catch(SQLException e){
             System.err.println("Erro ao conectar: "+e.getMessage());
             return null;
@@ -20,7 +30,7 @@ public class Conexao {
     }
 
     public static void main(String [] args){
-        try (var conexao = conectar()){
+        try (Connection conexao = conectar()){
             if (conexao != null){
                 var meta = conexao.getMetaData();
                 System.out.println("O nome do driver é "+meta.getDriverName());
